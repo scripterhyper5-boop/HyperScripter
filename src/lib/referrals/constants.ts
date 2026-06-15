@@ -1,0 +1,12 @@
+export const REFERRAL_COOKIE_NAME = "hs_ref";
+
+/** 30 days */
+export const REFERRAL_COOKIE_MAX_AGE = 30 * 24 * 60 * 60;
+
+export const REFERRAL_SIGNUP_BONUS_CREDITS = 3;
+
+export const REFERRAL_COMMISSION_RATE = 0.2;
+
+export const REFERRAL_CODE_LENGTH = 6;
+
+export const REFERRAL_CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
