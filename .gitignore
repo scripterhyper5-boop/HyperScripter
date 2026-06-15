@@ -42,3 +42,20 @@ next-env.d.ts
 
 # clerk configuration (can include secrets)
 /.clerk/
+
+# Ephemeral agent/tooling reports (regenerated per session — see docs/archive/)
+/docs/generated/
+/GITHUB_DEPLOYMENT_REPORT.md
+/GITHUB_PUSH_REPORT.md
+
+# Auto-generated audit/report markdown at repository root (store under docs/archive/)
+/*_REPORT.md
+/*_AUDIT_REPORT.md
+/*_AUDIT.md
+/PRODUCTION_CHECKLIST.md
+/LAUNCH_SMOKE_TEST.md
+/LAUNCH_READINESS_REPORT.md
+/DOCUMENTATION_CLEANUP_REPORT.md
+/VERCEL_DEPLOYMENT_REPORT.md
+/CSS_RENDER_FAILURE_REPORT.md
+/GITHUB_*.md
