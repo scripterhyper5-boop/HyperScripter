@@ -2,113 +2,83 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ClientOnly } from "@/components/client-only";
 import { useAuth } from "@/components/providers/auth-provider";
+import { USER_AUTH_ROUTES } from "@/lib/auth/constants";
 
-function NavbarAuthPlaceholder() {
+function useNavbarAuthenticated(initialAuthenticated: boolean): boolean {
+  const { user, isLoading } = useAuth();
+  if (isLoading) return initialAuthenticated;
+  return Boolean(user);
+}
+
+function NavbarGuestDesktop() {
   return (
     <>
       <Button variant="ghost" size="sm" asChild>
-        <Link href="/login">Sign in</Link>
+        <Link href={USER_AUTH_ROUTES.login}>Login</Link>
       </Button>
       <Button variant="violet-glow" size="sm" asChild>
-        <Link href="/signup">Get started</Link>
+        <Link href={USER_AUTH_ROUTES.signup}>Start Free</Link>
       </Button>
     </>
   );
 }
 
-function NavbarAuthActions() {
-  const { user, isLoading } = useAuth();
-
-  if (isLoading) {
-    return <NavbarAuthPlaceholder />;
-  }
-
-  if (user) {
-    return (
-      <Button variant="violet-glow" size="sm" asChild>
-        <Link href="/dashboard">Dashboard</Link>
-      </Button>
-    );
-  }
-
-  return <NavbarAuthPlaceholder />;
+function NavbarAuthedDesktop() {
+  return (
+    <Button variant="violet-glow" size="sm" asChild>
+      <Link href={USER_AUTH_ROUTES.dashboard}>Dashboard</Link>
+    </Button>
+  );
 }
 
-function NavbarMobileAuthActions({ onNavigate }: { onNavigate: () => void }) {
-  const { user, isLoading } = useAuth();
-
-  if (isLoading) {
-    return (
-      <>
-        <Button variant="outline" asChild>
-          <Link href="/login" onClick={onNavigate}>
-            Sign in
-          </Link>
-        </Button>
-        <Button variant="violet-glow" asChild>
-          <Link href="/signup" onClick={onNavigate}>
-            Get started free
-          </Link>
-        </Button>
-      </>
-    );
-  }
-
-  if (user) {
-    return (
-      <Button variant="violet-glow" asChild>
-        <Link href="/dashboard" onClick={onNavigate}>
-          Dashboard
-        </Link>
-      </Button>
-    );
-  }
-
+function NavbarGuestMobile({ onNavigate }: { onNavigate: () => void }) {
   return (
     <>
       <Button variant="outline" asChild>
-        <Link href="/login" onClick={onNavigate}>
-          Sign in
+        <Link href={USER_AUTH_ROUTES.login} onClick={onNavigate}>
+          Login
         </Link>
       </Button>
       <Button variant="violet-glow" asChild>
-        <Link href="/signup" onClick={onNavigate}>
-          Get started free
+        <Link href={USER_AUTH_ROUTES.signup} onClick={onNavigate}>
+          Start Free
         </Link>
       </Button>
     </>
   );
 }
 
-export function NavbarAuthDesktop() {
+function NavbarAuthedMobile({ onNavigate }: { onNavigate: () => void }) {
   return (
-    <ClientOnly fallback={<NavbarAuthPlaceholder />}>
-      <NavbarAuthActions />
-    </ClientOnly>
+    <Button variant="violet-glow" asChild>
+      <Link href={USER_AUTH_ROUTES.dashboard} onClick={onNavigate}>
+        Dashboard
+      </Link>
+    </Button>
   );
 }
 
-export function NavbarAuthMobile({ onNavigate }: { onNavigate: () => void }) {
-  return (
-    <ClientOnly
-      fallback={
-        <>
-          <Button variant="outline" asChild>
-            <Link href="/login" onClick={onNavigate}>
-              Sign in
-            </Link>
-          </Button>
-          <Button variant="violet-glow" asChild>
-            <Link href="/signup" onClick={onNavigate}>
-              Get started free
-            </Link>
-          </Button>
-        </>
-      }
-    >
-      <NavbarMobileAuthActions onNavigate={onNavigate} />
-    </ClientOnly>
+export function NavbarAuthDesktop({
+  initialAuthenticated,
+}: {
+  initialAuthenticated: boolean;
+}) {
+  const isAuthenticated = useNavbarAuthenticated(initialAuthenticated);
+  return isAuthenticated ? <NavbarAuthedDesktop /> : <NavbarGuestDesktop />;
+}
+
+export function NavbarAuthMobile({
+  initialAuthenticated,
+  onNavigate,
+}: {
+  initialAuthenticated: boolean;
+  onNavigate: () => void;
+}) {
+  const isAuthenticated = useNavbarAuthenticated(initialAuthenticated);
+  return isAuthenticated ? (
+    <NavbarAuthedMobile onNavigate={onNavigate} />
+  ) : (
+    <NavbarGuestMobile onNavigate={onNavigate} />
   );
 }

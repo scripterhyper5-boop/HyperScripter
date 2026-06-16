@@ -15,9 +15,14 @@ import { cn } from "@/lib/utils";
 
 interface NavbarProps {
   header?: HeaderSettings;
+  /** Server-resolved session presence — avoids auth CTA flicker on hydration. */
+  initialAuthenticated?: boolean;
 }
 
-export function Navbar({ header: initialHeader = DEFAULT_HEADER_SETTINGS }: NavbarProps) {
+export function Navbar({
+  header: initialHeader = DEFAULT_HEADER_SETTINGS,
+  initialAuthenticated = false,
+}: NavbarProps) {
   const header = useHeaderFooterPreview("header", initialHeader);
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -71,15 +76,11 @@ export function Navbar({ header: initialHeader = DEFAULT_HEADER_SETTINGS }: Navb
           </div>
         )}
 
-        <div className="hidden items-center gap-3 sm:flex">
-          {header.showCta ? (
-            <Button variant="violet-glow" size="sm" asChild>
-              <Link href={header.ctaUrl}>{header.ctaText}</Link>
-            </Button>
-          ) : (
-            <NavbarAuthDesktop />
-          )}
-        </div>
+        {header.showCta && (
+          <div className="hidden items-center gap-3 sm:flex">
+            <NavbarAuthDesktop initialAuthenticated={initialAuthenticated} />
+          </div>
+        )}
 
         <Button
           variant="ghost"
@@ -112,17 +113,14 @@ export function Navbar({ header: initialHeader = DEFAULT_HEADER_SETTINGS }: Navb
                   {link.label}
                 </Link>
               ))}
-              <div className="mt-3 flex flex-col gap-2 border-t border-border pt-4">
-                {header.showCta ? (
-                  <Button variant="violet-glow" asChild>
-                    <Link href={header.ctaUrl} onClick={() => setMobileOpen(false)}>
-                      {header.ctaText}
-                    </Link>
-                  </Button>
-                ) : (
-                  <NavbarAuthMobile onNavigate={() => setMobileOpen(false)} />
-                )}
-              </div>
+              {header.showCta && (
+                <div className="mt-3 flex flex-col gap-2 border-t border-border pt-4">
+                  <NavbarAuthMobile
+                    initialAuthenticated={initialAuthenticated}
+                    onNavigate={() => setMobileOpen(false)}
+                  />
+                </div>
+              )}
             </div>
           </motion.div>
         )}
